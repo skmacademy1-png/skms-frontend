@@ -128,7 +128,7 @@ export function PlanCard({ c, onBuy }) {
 }
 
 export function Faculty() {
-  const faculty = useFaculty(), hasCards = faculty.length > 0;
+  const { faculty, failed, retry } = useFaculty(), hasCards = faculty?.length > 0;
   const rail = useRef(null), group = useRef(null);
   const [loop, setLoop] = useState(false);
   useEffect(() => {
@@ -139,9 +139,9 @@ export function Faculty() {
     ro.observe(group.current);
     return () => ro.disconnect();
   }, [hasCards]);
-  if (!hasCards) return null;
+  if (faculty && !hasCards) return null;   // the admin emptied the list on purpose
 
-  const cards = faculty.map((f, i) => (
+  const cards = hasCards && faculty.map((f, i) => (
     <figure key={i} className="fac">
       <img src={safeUrl(f.photo)} alt={f.name} loading="lazy" />
       <figcaption><b>{f.name}</b><span>{f.role}</span></figcaption>
@@ -155,10 +155,18 @@ export function Faculty() {
         <p className="section-head__sub">Our multidisciplinary team of licensed specialists, surgeons, and AI media professionals — each an expert in their field.</p>
       </header>
       {/* the second copy only exists when the row overflows the screen and has to loop seamlessly */}
-      <div className="marquee" ref={rail}><div id="faculty" className={loop ? undefined : 'is-static'}>
-        <div className="marquee-group" ref={group}>{cards}</div>
-        {loop && <div className="marquee-group" aria-hidden="true">{cards}</div>}
-      </div></div>
+      {hasCards ? (
+        <div className="marquee" ref={rail}><div id="faculty" className={loop ? undefined : 'is-static'}>
+          <div className="marquee-group" ref={group}>{cards}</div>
+          {loop && <div className="marquee-group" aria-hidden="true">{cards}</div>}
+        </div></div>
+      ) : (
+        <div className="faculty__status" role="status">
+          {failed
+            ? <><p>We couldn&#39;t load our faculty right now.</p><button type="button" onClick={retry}>Try again</button></>
+            : <p>Loading our faculty…</p>}
+        </div>
+      )}
     </section>
   );
 }

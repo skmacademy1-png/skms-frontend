@@ -987,6 +987,9 @@ details[open] .chev{transform:rotate(180deg)}
 }
 .faculty{background:#f4f6f0;padding:92px 0}
 .faculty .marquee{margin-top:44px;padding:8px 0}
+.faculty__status{display:grid;place-content:center;justify-items:center;gap:12px;min-height:280px;margin-top:44px;padding:0 24px;text-align:center;font-size:14px;color:#6d6d6d}   /* same height as the cards: no jump when they arrive */
+.faculty__status p{margin:0}
+.faculty__status button{font-weight:500;color:#8a9b68;text-decoration:underline;cursor:pointer}
 .fac{flex:none;width:220px;margin:0;text-align:center}
 .fac img{width:200px;height:200px;margin:0 auto;border-radius:50%;object-fit:cover;display:block}
 .fac figcaption{margin-top:24px}
