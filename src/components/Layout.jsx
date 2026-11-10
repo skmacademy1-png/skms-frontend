@@ -17,6 +17,8 @@ export default function Layout() {
   useEffect(() => {
     const el = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
     el ? el.scrollIntoView() : window.scrollTo(0, 0);
+    // web fonts re-wrap the text above and push the section down, so land again once they're in
+    if (el) document.fonts.ready.then(() => el.scrollIntoView());
   }, [pathname, hash]);
 
   return (

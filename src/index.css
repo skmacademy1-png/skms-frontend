@@ -39,10 +39,10 @@
 
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
-/* scroll-padding = sticky header height, so #anchor jumps (plans.html#gp) land below it instead of under it */
-html{scroll-behavior:smooth;scroll-padding-top:106px}
-@media (max-width:768px){html{scroll-padding-top:56px}}
-@media (min-width:1024px){html{scroll-padding-top:114px}}
+/* scroll-padding = sticky header height incl. its 1px border, so #anchor jumps (plans.html#gp) land below it instead of under it */
+html{scroll-behavior:smooth;scroll-padding-top:107px}
+@media (max-width:768px){html{scroll-padding-top:57px}}
+@media (min-width:1024px){html{scroll-padding-top:115px}}
 /* clip, not hidden: hidden turns body into a scroll container and breaks the sticky navbar */
 html,body{overflow-x:clip}
 body{background:var(--mint);font-family:'Glacial Indifference',system-ui,sans-serif;color:#2f2f2f;-webkit-font-smoothing:antialiased}
@@ -549,17 +549,23 @@ details[open] .chev{transform:rotate(180deg)}
 .founder{background:#eff1ea;padding:120px 0}
 .founder__inner{
   max-width:1328px;margin:0 auto;padding:0 24px;   /* 1280 of content at 1440 */
+  container-type:inline-size;   /* cqw for .founder__body */
   display:grid;grid-template-columns:57.66% 42.34%;
 }
 
 /* portrait and copy share one grid row; the copy paints on top */
 .founder__media{grid-area:1/2/2/3;margin:0;align-self:start}
 .founder__media img{
-  display:block;width:100%;aspect-ratio:542/656;
-  object-fit:cover;object-position:top center;
+  display:block;width:100%;aspect-ratio:4/5;
+  object-fit:cover;object-position:center center;
   border-radius:28px;background:#dcdcdc;
 }
-.founder__body{grid-area:1/1/2/3;position:relative;z-index:2;padding-top:60px}
+.founder__body{
+  grid-area:1/1/2/3;position:relative;z-index:2;
+  /* the academy name on the portrait ends ~55% down the frame (frame = 42.34cqw wide, 4:5);
+     drop the copy just enough that the card (213px below this padding) starts under it */
+  padding-top:max(60px, calc(29.3cqw - 213px));
+}
 
 .founder__title{
   margin:12px 0 0;
@@ -594,7 +600,7 @@ details[open] .chev{transform:rotate(180deg)}
 @media (max-width:1180px){
   .founder__inner{display:flex;flex-direction:column;gap:32px}
   .founder__media{order:-1}
-  .founder__media img{aspect-ratio:16/10;max-height:420px}
+  .founder__media img{aspect-ratio:4/5;max-width:420px}
   .founder__body{padding-top:0}
   .founder__card{width:100%;margin-left:0;padding:28px 26px;background:#fff;border-radius:24px}
 }
@@ -612,8 +618,8 @@ details[open] .chev{transform:rotate(180deg)}
   .founder__body{display:contents}
   .founder__media{order:1;margin:20px 0 0}
   .founder__media img{
-    width:100%;max-width:360px;max-height:none;aspect-ratio:4/3;margin:0 auto;
-    object-fit:cover;object-position:center top;border-radius:20px;
+    width:100%;max-width:360px;max-height:none;aspect-ratio:4/5;margin:0 auto;
+    object-fit:cover;object-position:center center;border-radius:20px;
   }
   .founder__card{
     order:2;position:relative;z-index:2;
