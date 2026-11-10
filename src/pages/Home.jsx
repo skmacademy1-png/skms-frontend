@@ -46,7 +46,6 @@ function Cases() {
       <div className="cases__inner">
         <div className="cases__grid">
           <header className="cases__intro">
-            <p className="cases__eyebrow">{c.eyebrow}</p>
             <h2 className="cases__title" id="cases-title"><Rich text={c.headline} /></h2>
           </header>
           <div className="cases__copy">{(c.body || []).map((p, i) => <p key={i}><Rich text={p} /></p>)}</div>

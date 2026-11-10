@@ -12,7 +12,6 @@ export const DEFAULTS = {
 
   /* "Face Real Cases" banner under the hero. *word* = green italic, **words** = bold */
   cases: {
-    eyebrow: 'Highly Recommended',
     headline: 'Face Real Cases.\n*Sharpen Your Clinical Thinking.*',
     body: [
       'Highly Recommended for Medical Students for final year examination and Doctors Preparing for Gulf licensing and other Competitive Clinical Examinations Worldwide.',
