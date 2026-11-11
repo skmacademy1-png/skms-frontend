@@ -557,7 +557,7 @@ details[open] .chev{transform:rotate(180deg)}
 .founder__media{grid-area:1/2/2/3;margin:0;align-self:start}
 .founder__media img{
   display:block;width:100%;aspect-ratio:4/5;
-  object-fit:cover;object-position:center center;
+  object-fit:cover;object-position:25% center;
   border-radius:28px;background:#dcdcdc;
 }
 .founder__body{
@@ -619,7 +619,7 @@ details[open] .chev{transform:rotate(180deg)}
   .founder__media{order:1;margin:20px 0 0}
   .founder__media img{
     width:100%;max-width:360px;max-height:none;aspect-ratio:4/5;margin:0 auto;
-    object-fit:cover;object-position:center center;border-radius:20px;
+    object-fit:cover;object-position:25% center;border-radius:20px;
   }
   .founder__card{
     order:2;position:relative;z-index:2;

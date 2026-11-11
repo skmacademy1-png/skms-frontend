@@ -198,7 +198,7 @@ export function Founder() {
           </div>
         </div>
         <figure className="founder__media">
-          <img src="/img/ceo-portrait.png" alt="Dr. Shameema K Mohammed, founder of Dr. SKM's Academy" />
+          <img src="/img/drdr.png" alt="Dr. Shameema K Mohammed, founder of Dr. SKM's Academy" />
         </figure>
       </div>
     </section>
