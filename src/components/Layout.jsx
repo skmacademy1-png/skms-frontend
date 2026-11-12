@@ -8,9 +8,11 @@ import { useCms } from '../lib/site.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { api } from '../lib/api.js';
 import { Brand } from './icons.jsx';
+import { EnquiryModal } from './Enquiry.jsx';
 
 export default function Layout() {
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [enquiry, setEnquiry] = useState(null);   // 'job' | 'guidance' | null
   const { pathname, hash } = useLocation();
 
   // a new page starts at the top; a #hash lands on its section (the sticky header offset is in the CSS)
@@ -25,9 +27,10 @@ export default function Layout() {
     <>
       <Announcement />
       <Header />
-      <main><Outlet context={{ openReview: () => setReviewOpen(true) }} /></main>
+      <main><Outlet context={{ openReview: () => setReviewOpen(true), openEnquiry: setEnquiry }} /></main>
       <Footer />
       {reviewOpen && <ReviewModal onClose={() => setReviewOpen(false)} />}
+      {enquiry && <EnquiryModal key={enquiry} kind={enquiry} onClose={() => setEnquiry(null)} />}
     </>
   );
 }
@@ -46,7 +49,7 @@ function Announcement() {
   );
 }
 
-const StorePill = ({ kind }) => {
+export const StorePill = ({ kind }) => {
   const Icon = Brand[kind];
   return (
     <a href={kind === 'apple' ? CONTACT.appStore : CONTACT.playStore} target="_blank" rel="noopener" className="store-pill nav-font">
@@ -201,6 +204,8 @@ function Footer() {
           </div>
           <p className="site-footer__blurb">AI-powered clinical learning designed specifically for Medical Licensing Examinations. Trusted by 500+ doctors across the GCC.</p>
           <div className="site-footer__social"><Socials size={44} /></div>
+          {/* 769–1279px: the navbar has no room for the store pills (phones get them in the hero instead) */}
+          <div className="mt-6 hidden flex-wrap gap-3 min-[769px]:flex xl:hidden"><StorePill kind="apple" /><StorePill kind="play" /></div>
         </div>
         {col('PLATFORMS', [['HOME', '/'], ['Plans', '/plans'], ['Courses', '/courses'], ['About Us', '/about']])}
         {col('SUPPORT', [['Contact Us', '/contact'], ['FAQs', '/faq']])}

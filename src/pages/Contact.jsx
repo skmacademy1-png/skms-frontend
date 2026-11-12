@@ -1,5 +1,6 @@
 /* The message opens in the visitor's own email app, addressed to the academy — nothing is sent from the page */
 import { useState } from 'react';
+import { useOutletContext } from 'react-router';
 import { CONTACT } from '../lib/content.js';
 import { Socials } from '../components/Layout.jsx';
 
@@ -7,6 +8,7 @@ const field = 'w-full rounded-2xl bg-[#e6eade] px-6 py-4 text-[15px] outline-non
 
 export default function Contact() {
   const [msg, setMsg] = useState(null);
+  const { openEnquiry } = useOutletContext();
 
   function submit(e) {
     e.preventDefault();
@@ -30,6 +32,8 @@ export default function Contact() {
           <p className="mt-5 text-[14px] text-[#8a8a8a]">Phone</p>
           <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="text-[16px] font-medium hover:underline">{CONTACT.phone}</a>
           <div className="mt-8 flex gap-3"><Socials size={44} /></div>
+          <p className="mt-9 text-[14px] text-[#8a8a8a]">Need help choosing your exam or plan?</p>
+          <button type="button" className="btn btn--primary mt-3" onClick={() => openEnquiry('guidance')}>Request Guidance</button>
         </div>
 
         <form noValidate onSubmit={submit}>

@@ -1,9 +1,10 @@
 import { Link, useOutletContext } from 'react-router';
-import { ClipboardList, PhoneCall, SquarePen } from 'lucide-react';
+import { BriefcaseMedical, ClipboardList, PhoneCall, SquarePen } from 'lucide-react';
 import { isExternal, safeUrl } from '../lib/content.js';
 import { useCms, usePlans } from '../lib/site.jsx';
 import { ABOUT_TEXT, COURSE_COPY, SPECIALIST_COPY } from '../lib/copy.jsx';
 import { Clamp, Cta, Faculty, FaqList, Founder, ProgramCard, Rich, StudentReview, Testimonial } from '../components/Sections.jsx';
+import { StorePill } from '../components/Layout.jsx';
 
 /* a CMS link: an internal page goes through the router, anything else is a plain link */
 function CmsLink({ to, className, children }) {
@@ -14,7 +15,7 @@ function CmsLink({ to, className, children }) {
 
 function Hero() {
   const h = useCms('hero');
-  const { openReview } = useOutletContext();
+  const { openReview, openEnquiry } = useOutletContext();
   return (
     <section className="hero">
       <img className="hero__bg" src={safeUrl(h.image)} alt="Doctor holding a stethoscope in a hospital corridor" />
@@ -33,7 +34,10 @@ function Hero() {
           <li><Link className="quick" to="/demo"><ClipboardList /><span>Free Exam<br />Demo</span></Link></li>
           <li><button className="quick" type="button" onClick={openReview}><SquarePen /><span>Write A<br />Review</span></button></li>
           <li><Link className="quick" to="/contact"><PhoneCall /><span>Guidance<br />Call</span></Link></li>
+          <li><button className="quick" type="button" onClick={() => openEnquiry('job')}><BriefcaseMedical /><span>Job<br />Enquiry</span></button></li>
         </ul>
+        {/* phones only (CSS): the navbar's store pills have no room in the mobile header */}
+        <div className="hero__stores"><StorePill kind="apple" /><StorePill kind="play" /></div>
       </div>
     </section>
   );

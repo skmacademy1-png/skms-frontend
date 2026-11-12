@@ -405,16 +405,15 @@ details[open] .chev{transform:rotate(180deg)}
   /* the two main buttons: a left-aligned stack, 10px apart */
   .hero__actions{display:flex;flex-direction:column;align-self:flex-start;width:100%;max-width:290px;gap:10px;margin:0}
   .hero__actions .btn{width:100%;height:50px;padding:0 20px}
-  /* quick links: one row of three, 28px under the buttons */
-  .hero__quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;max-width:560px;margin-top:28px;padding-top:0}
+  /* quick links: two rows of two, 28px under the buttons */
+  .hero__quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:560px;margin-top:28px;padding-top:0}
   .quick{width:100%;height:auto;min-height:56px;padding:8px;gap:8px;font-size:12px}
   .quick i,.quick svg{width:18px;height:18px}
+  /* store pills: one row of two under the quick links (two rows on the narrowest phones) */
+  .hero__stores{display:flex;flex-wrap:wrap;gap:8px;width:100%;max-width:560px;margin-top:16px}
+  .hero__stores .store-pill{flex:1 1 140px;width:auto;justify-content:center;padding:0 12px}
 }
-@media (max-width:360px){
-  /* the smallest phones: quick links go two-up, the last one full width */
-  .hero__quick{grid-template-columns:1fr 1fr}
-  .hero__quick li:last-child{grid-column:1 / -1}
-}
+@media (min-width:769px){.hero__stores{display:none}}
 
 /* =========================================================
    Course showcase — one white panel, full-bleed alternating rows

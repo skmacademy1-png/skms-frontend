@@ -1,8 +1,8 @@
 /* skms-backend client. Local Vite development uses the local API by default.
   For a deployed build, set VITE_API_URL to the live backend URL in the hosting provider. */
 const LOCAL_API_URL = 'http://localhost:4000';
-// Production API: https://skms-backend.onrender.com
-const LIVE_API_URL = 'https://skms-backend.onrender.com';
+// Production API: https://skms-backend-xgcx.onrender.com
+const LIVE_API_URL = 'https://skms-backend-xgcx.onrender.com';
 export const API_URL = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? LOCAL_API_URL : LIVE_API_URL)).replace(/\/+$/, '');
 
 /* null when the API can't be reached (asleep, offline, timed out), else { ok, status, data }.
