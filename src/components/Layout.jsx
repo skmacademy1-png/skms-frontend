@@ -49,7 +49,7 @@ function Announcement() {
   );
 }
 
-export const StorePill = ({ kind }) => {
+const StorePill = ({ kind }) => {
   const Icon = Brand[kind];
   return (
     <a href={kind === 'apple' ? CONTACT.appStore : CONTACT.playStore} target="_blank" rel="noopener" className="store-pill nav-font">
@@ -110,7 +110,7 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-black/[.06] bg-mint">
-      <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-4 px-4 min-[769px]:h-[106px] min-[769px]:px-6 lg:h-[114px] lg:px-10 min-[90rem]:px-20">
+      <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-2 px-4 min-[769px]:h-[106px] min-[769px]:gap-4 min-[769px]:px-6 lg:h-[114px] lg:px-10 min-[90rem]:px-20">
         <Link to="/" className="navbar-brand h-11 w-11 shrink-0 min-[769px]:h-[80px] min-[769px]:w-[80px]">
           <img src="/img/logo.png" alt="Dr. SKM's Academy" className="h-full w-full object-contain" />
         </Link>
@@ -129,7 +129,8 @@ function Header() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2.5">
-          <div className="hidden items-center gap-2.5 xl:flex">
+          {/* phones (≤768px): the same pills, icon-only (CSS .navbar-stores); 769–1279px: hidden; xl: full pills */}
+          <div className="navbar-stores flex items-center gap-1.5 min-[769px]:hidden xl:flex xl:gap-2.5">
             <StorePill kind="apple" />
             <StorePill kind="play" />
           </div>
@@ -204,7 +205,7 @@ function Footer() {
           </div>
           <p className="site-footer__blurb">AI-powered clinical learning designed specifically for Medical Licensing Examinations. Trusted by 500+ doctors across the GCC.</p>
           <div className="site-footer__social"><Socials size={44} /></div>
-          {/* 769–1279px: the navbar has no room for the store pills (phones get them in the hero instead) */}
+          {/* 769–1279px: the navbar has no room for the store pills (phones get icon-only ones in the navbar) */}
           <div className="mt-6 hidden flex-wrap gap-3 min-[769px]:flex xl:hidden"><StorePill kind="apple" /><StorePill kind="play" /></div>
         </div>
         {col('PLATFORMS', [['HOME', '/'], ['Plans', '/plans'], ['Courses', '/courses'], ['About Us', '/about']])}

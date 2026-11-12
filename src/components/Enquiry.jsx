@@ -5,29 +5,19 @@ import { X } from 'lucide-react';
 import { api } from '../lib/api.js';
 
 const PHONE = { type: 'tel', inputMode: 'tel', autoComplete: 'tel', maxLength: 20, placeholder: 'eg, +91 98765 43210' };
-// [name, label, input props]; every field is required. The API checks the same rules again.
+// [name, label, input props]; required unless `optional`. The API checks the same rules again.
+const JOB_FIELDS = [
+  ['name', 'Full Name', { autoComplete: 'name', maxLength: 80 }],
+  ['qualification', 'Qualification', { maxLength: 120, placeholder: 'eg, MBBS, MD' }],
+  ['experience', 'Years of Experience', { type: 'number', inputMode: 'decimal', min: 0, max: 60, step: 0.5 }],
+  ['phone', 'Contact Number', PHONE],
+  ['specialization', 'Gulf Licensing Examination Qualified Field / Medical Specialization', { maxLength: 120, wide: true }],
+];
 const ENQUIRY_FORMS = {
-  job: {
-    title: 'Job Enquiry',
-    fields: [
-      ['name', 'Full Name', { autoComplete: 'name', maxLength: 80 }],
-      ['qualification', 'Qualification', { maxLength: 120, placeholder: 'eg, MBBS, MD' }],
-      ['experience', 'Years of Experience', { type: 'number', inputMode: 'decimal', min: 0, max: 60, step: 0.5 }],
-      ['phone', 'Contact Number', PHONE],
-      ['whatsapp', 'WhatsApp Number', PHONE],
-      ['specialization', 'Gulf Licensing Examination Qualified Field / Medical Specialization', { maxLength: 120, wide: true }],
-    ],
-  },
-  guidance: {
-    title: 'Guidance Request',
-    fields: [
-      ['name', 'Full Name', { autoComplete: 'name', maxLength: 80 }],
-      ['qualification', 'Qualification', { maxLength: 120, placeholder: 'eg, MBBS, MD' }],
-      ['phone', 'Contact Number', PHONE],
-      ['whatsapp', 'WhatsApp Number', PHONE],
-      ['requirement', 'Guidance Requirement', { textarea: true, maxLength: 1000, placeholder: 'Tell us what you need help with...' }],
-    ],
-  },
+  job: { title: 'Job Enquiry', fields: JOB_FIELDS },
+  // the same student details as Job Enquiry, plus a short optional message
+  guidance: { title: 'Guidance Request', fields: [...JOB_FIELDS,
+    ['requirement', 'Guidance Requirement (optional)', { textarea: true, optional: true, rows: 3, maxLength: 1000, placeholder: 'Briefly describe your guidance requirement' }]] },
 };
 
 const validPhone = v => /^\+?\d{7,15}$/.test(v.replace(/[\s().-]/g, ''));
@@ -47,7 +37,8 @@ export function EnquiryModal({ kind, onClose }) {
     const f = e.currentTarget;
     const bad = fields.find(([k, , o]) => {
       const v = form[k].trim();
-      return !v || (o.type === 'tel' && !validPhone(v)) || (o.type === 'number' && !(Number(v) >= 0 && Number(v) <= 60));
+      if (!v) return !o.optional;
+      return (o.type === 'tel' && !validPhone(v)) || (o.type === 'number' && !(Number(v) >= 0 && Number(v) <= 60));
     });
     if (bad) {
       f.elements[bad[0]].focus();
@@ -69,12 +60,12 @@ export function EnquiryModal({ kind, onClose }) {
         <button type="button" onClick={onClose} className="review-card__x" aria-label="Close"><X /></button>
         <h2 id="enq-title" className="mb-6 pr-8 font-display text-[26px] font-bold">{title}</h2>
         <div className="grid sm:grid-cols-2 sm:gap-x-4">
-          {fields.map(([k, label, { textarea, wide, ...o }]) => {
+          {fields.map(([k, label, { textarea, wide, optional, ...o }]) => {
             const Input = textarea ? 'textarea' : 'input';
             return (
               <div key={k} className={textarea || wide ? 'sm:col-span-2' : ''}>
                 <label className="review-card__label" htmlFor={`enq-${k}`}>{label}</label>
-                <Input id={`enq-${k}`} name={k} required {...o} className={`review-card__input${textarea ? ' review-card__area' : ''}`}
+                <Input id={`enq-${k}`} name={k} required={!optional} {...o} className={`review-card__input${textarea ? ' resize-none' : ''}`}
                   value={form[k]} onChange={e => { setForm(s => ({ ...s, [k]: e.target.value })); if (msg?.bad) setMsg(null); }} />
               </div>
             );
