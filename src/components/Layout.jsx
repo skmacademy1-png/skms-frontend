@@ -177,7 +177,7 @@ function Header() {
 
 /* Social buttons — footer and contact page */
 export function Socials({ size = 40 }) {
-  return ['instagram', 'whatsapp', 'facebook', 'youtube'].map(k => {
+  return ['whatsapp', 'facebook', 'instagram', 'linkedin'].map(k => {
     const Icon = Brand[k], href = CONTACT[k];
     return (
       <a key={k} href={href} {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})} aria-label={k} title={k}

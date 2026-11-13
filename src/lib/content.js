@@ -94,9 +94,9 @@ export const CONTACT = {
   email: 'contact@drskmacademy.com',
   phone: '+91 9605500678',
   whatsapp: 'https://wa.me/919605500678',
-  instagram: '#',
-  facebook: '#',
-  youtube: '#',
+  instagram: 'https://www.instagram.com/drskmsacademy?srtk=ejh4dDZ6amQ4Y3Fq&utm_source=qr',
+  facebook: 'https://www.facebook.com/share/1ExuV4wojh/?mibextid=wwXIfr',
+  linkedin: 'https://www.linkedin.com/company/dr-skm%E2%80%99s-academy/',
   // paste the real app links here — the navbar pills use them
   appStore: 'https://apps.apple.com/',
   playStore: 'https://play.google.com/store/apps',
