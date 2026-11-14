@@ -6,10 +6,10 @@ import { COURSE_COPY, SPECIALIST_COPY } from '../lib/copy.jsx';
 import { Cta } from '../components/Sections.jsx';
 
 const COURSES = {
-  gp: { title: 'Gulf Medical Licensing Examinations', img: '/img/card-gulf.jpg', alt: 'Doctor preparing for the Gulf licensing examination at a laptop' },
-  ai: { title: 'Live patient AI VIDEOS', img: '/img/card-ai.jpg', alt: 'AI live patient video session on a laptop beside study notes' },
-  specialist: { title: 'Specialist Gulf Licensing Examination.', img: '/img/card-specialist.jpg', alt: 'Specialist doctor studying for the licensing examination', rich: true },
-  final: { title: 'Final year practical exam demo -AI VIDEOS', img: '/img/card-final.jpg', alt: 'Final year student reviewing a clinical case video' },
+  gp: { title: 'GP Gulf Licensing Examination', img: '/img/card-gulf.jpg', alt: 'Doctor preparing for the Gulf licensing examination at a laptop' },
+  ai: { title: "AI-Live Patient – Doctor's Clinical Foundation", img: '/img/card-ai.jpg', alt: 'AI live patient video session on a laptop beside study notes' },
+  specialist: { title: 'Specialist Gulf Licensing Examination', img: '/img/card-specialist.jpg', alt: 'Specialist doctor studying for the licensing examination', rich: true },
+  final: { title: 'Final-Year Medicine Practical Examination', img: '/img/card-final.jpg', alt: 'Final year student reviewing a clinical case video' },
 };
 
 export default function Courses() {

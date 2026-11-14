@@ -4,7 +4,7 @@
 export const DEFAULTS = {
   hero: {
     headline: 'Master Clinical\n*Excellence*\nfor Gulf Licensing',   // one row per line, *word* = green italic
-    sub: 'AI-powered clinical learning designed specifically for Gulf licensing examinations. Master 1500+ high-yield Q&As and join successful doctors who passed HAAD, DHA, SLE, QCHP on their first attempt.',
+    sub: 'AI-powered clinical learning designed specifically for Gulf licensing examinations. Master 1500+ high-yield Q&As and join successful doctors who passed DOH (formerly HAAD), DHA, SMLE, DHP (formerly QCHP) on their first attempt.',
     cta1Text: 'Explore Courses', cta1Link: 'courses.html',
     cta2Text: 'View Plans', cta2Link: 'plans.html',
     image: 'img/hero.jpg',
@@ -80,7 +80,7 @@ export const DEFAULTS = {
   announcement: { enabled: false, text: '', linkText: '', link: '' },
 
   faqs: [
-    { q: 'Which Gulf licensing examinations does the Academy cover?', a: 'We cover all major Gulf licensing examinations including HAAD, DHA, and MOH (UAE), SLE (Saudi Arabia). QCHP (Qatar), NHRA (Bahrain), MOH Kuwait, and OMSB (Oman). Content is updated each examination cycle' },
+    { q: 'Which Gulf licensing examinations does the Academy cover?', a: 'We cover all major Gulf licensing examinations including DOH (Abu Dhabi – formerly HAAD), DHA (Dubai) and MOHAP (UAE), SMLE (Saudi Arabia), DHP (Qatar – formerly QCHP), NHRA (Bahrain), Kuwait MOH, and OMSB (Oman). Content is updated each examination cycle.' },
     { q: 'How does the AI clinical learning system work?', a: 'Our AI recreates realistic patient–doctor encounters as video scenarios. You observe history taking, examination technique and reasoning, then work through case-based MCQs built on the same case.' },
     { q: 'Are the courses taught by qualified faculty?', a: 'Yes. Every course is delivered by licensed specialists and surgeons practising in the GCC, supported by our AI media production team.' },
     { q: 'Is there a refund policy?', a: 'Plans are refundable within 48 hours of purchase provided less than 10% of the course content has been accessed. Write to contact@drskmacademy.com to start a request.' },
@@ -111,10 +111,10 @@ export const NAV = [
 ];
 
 export const COURSE_MENU = [
-  ['Gulf Medical Licensing Examinations', '/courses#gp'],
-  ['Live patient AI VIDEOS', '/courses#ai'],
-  ['Specialist Gulf Licensing Examinations', '/courses#specialist'],
-  ['Final year practical exam demo -AI VIDEOS', '/courses#final'],
+  ['GP Gulf Licensing Examination', '/courses#gp'],
+  ["AI-Live Patient – Doctor's Clinical Foundation", '/courses#ai'],
+  ['Specialist Gulf Licensing Examination', '/courses#specialist'],
+  ['Final-Year Medicine Practical Examination', '/courses#final'],
 ];
 
 export const money = n => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });   // $150,000

@@ -74,10 +74,10 @@ function Showcase() {
   return (
     <section className="courses" id="courses" aria-label="Our programs">
       <div className="courses__panel">
-        <Course img="/img/card-gulf.jpg" alt="Doctor preparing for the Gulf licensing examination at a laptop" title="Gulf Medical Licensing Examinations">{COURSE_COPY.gp}</Course>
-        <Course reverse img="/img/card-ai.jpg" alt="AI live patient video session on a laptop beside study notes" title={<>Live patient AI<br />VIDEOS</>}>{COURSE_COPY.ai}</Course>
-        <Course img="/img/card-final.jpg" alt="Final year student reviewing a clinical case video" title="Final Year Practical Exam Demo -AI VIDEOS" lines={5}>{COURSE_COPY.final}</Course>
-        <Course reverse rich img="/img/card-specialist.jpg" alt="Specialist doctor studying for the licensing examination" title="Specialist Gulf Licensing Examination.">{SPECIALIST_COPY}</Course>
+        <Course img="/img/card-gulf.jpg" alt="Doctor preparing for the Gulf licensing examination at a laptop" title="GP Gulf Licensing Examination">{COURSE_COPY.gp}</Course>
+        <Course reverse img="/img/card-ai.jpg" alt="AI live patient video session on a laptop beside study notes" title={<>AI-Live Patient –<br />Doctor&#39;s Clinical Foundation</>}>{COURSE_COPY.ai}</Course>
+        <Course img="/img/card-final.jpg" alt="Final year student reviewing a clinical case video" title="Final-Year Medicine Practical Examination" lines={5}>{COURSE_COPY.final}</Course>
+        <Course reverse rich img="/img/card-specialist.jpg" alt="Specialist doctor studying for the licensing examination" title="Specialist Gulf Licensing Examination">{SPECIALIST_COPY}</Course>
       </div>
     </section>
   );
