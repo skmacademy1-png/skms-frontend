@@ -2,7 +2,7 @@ import { Link, useOutletContext } from 'react-router';
 import { BriefcaseMedical, ClipboardList, PhoneCall, SquarePen } from 'lucide-react';
 import { isExternal, safeUrl } from '../lib/content.js';
 import { useCms, usePlans } from '../lib/site.jsx';
-import { ABOUT_TEXT, COURSE_COPY, SPECIALIST_COPY } from '../lib/copy.jsx';
+import { ABOUT_TEXT, COURSE_COPY, COURSE_HEADINGS, SPECIALIST_COPY } from '../lib/copy.jsx';
 import { Clamp, Cta, Faculty, FaqList, Founder, ProgramCard, Rich, StudentReview, Testimonial } from '../components/Sections.jsx';
 /* a CMS link: an internal page goes through the router, anything else is a plain link */
 function CmsLink({ to, className, children }) {
@@ -60,11 +60,12 @@ function Cases() {
   );
 }
 
-const Course = ({ img, alt, title, reverse, children, rich, lines }) => (
+const Course = ({ img, alt, title, heading, reverse, children, rich, lines }) => (
   <article className={`course${reverse ? ' course--reverse' : ''}`}>
     <figure className="course__media"><img src={img} alt={alt} /></figure>
     <div className="course__body">
       <h2 className="course__title">{title}</h2>
+      {heading && <p className="course-heading">{heading}</p>}
       <Clamp as={rich ? 'div' : 'p'} lines={lines} className={`course__text${rich ? ' course-rich' : ''}`}>{children}</Clamp>
     </div>
   </article>
@@ -75,8 +76,8 @@ function Showcase() {
     <section className="courses" id="courses" aria-label="Our programs">
       <div className="courses__panel">
         <Course img="/img/card-gulf.jpg" alt="Doctor preparing for the Gulf licensing examination at a laptop" title="GP Gulf Licensing Examination">{COURSE_COPY.gp}</Course>
-        <Course reverse img="/img/card-ai.jpg" alt="AI live patient video session on a laptop beside study notes" title={<>AI-Live Patient –<br />Doctor&#39;s Clinical Foundation</>}>{COURSE_COPY.ai}</Course>
-        <Course img="/img/card-final.jpg" alt="Final year student reviewing a clinical case video" title="Final-Year Medicine Practical Examination" lines={5}>{COURSE_COPY.final}</Course>
+        <Course reverse img="/img/card-ai.jpg" alt="AI live patient video session on a laptop beside study notes" title={<>AI-Live Patient –<br />Doctor&#39;s Clinical Foundation</>} heading={COURSE_HEADINGS.ai}>{COURSE_COPY.ai}</Course>
+        <Course img="/img/card-final.jpg" alt="Final year student reviewing a clinical case video" title="Final-Year Medicine Practical Examination" heading={COURSE_HEADINGS.final} lines={5}>{COURSE_COPY.final}</Course>
         <Course reverse rich img="/img/card-specialist.jpg" alt="Specialist doctor studying for the licensing examination" title="Specialist Gulf Licensing Examination">{SPECIALIST_COPY}</Course>
       </div>
     </section>

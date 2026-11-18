@@ -118,7 +118,22 @@ export const COURSE_MENU = [
 ];
 
 export const money = n => '$' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });   // $150,000
-export const planLabel = (group, card) => [group.label, card.name || card.duration].filter(Boolean).join(' — ');
+/* Program names: the admin may save a short program name ("GP", "GP License Exam"); the site always shows the full
+   one. Only these approved aliases are mapped — anything else is shown exactly as entered. Stored values never change.
+   Keys are normalised: lower case, hyphens/dashes/spaces collapsed, apostrophes unified. */
+const GP = 'GP Gulf Licensing Examination', SPECIALIST = 'Specialist Gulf Licensing Examination';
+const AI = "AI-Live Patient – Doctor's Clinical Foundation", FINAL = 'Final-Year Medicine Practical Examination';
+const normName = s => String(s ?? '').toLowerCase().replace(/[‘’`´]/g, "'").replace(/[\s\-‐‑–—]+/g, ' ').trim();
+const PROGRAM_NAMES = new Map(Object.entries({
+  'GP': GP, 'GP License Exam': GP, 'GP Gulf Licensing Exam': GP, [GP]: GP,
+  'Specialist': SPECIALIST, 'Specialist License Exam': SPECIALIST, [SPECIALIST]: SPECIALIST,
+  'AI-Live Patient': AI, "Doctor's Clinical Foundation": AI, [AI]: AI,
+  'Final Year Medicine Practical': FINAL, 'Final Year Practical Exam': FINAL, 'Final-Year Practical Exam': FINAL, [FINAL]: FINAL,
+}).map(([alias, full]) => [normName(alias), full]));
+export const programName = name => PROGRAM_NAMES.get(normName(name)) ?? name;
+// "GP License Exam — Plan A" (a plan label, as saved on an enrollment) → "GP Gulf Licensing Examination — Plan A"
+export const planTitle = label => { const [p, ...rest] = String(label ?? '').split(' — '); return [programName(p), ...rest].join(' — '); };
+export const planLabel = (group, card) => [programName(group.label), card.name || card.duration].filter(Boolean).join(' — ');
 export const initials = name => String(name ?? '').replace(/^Dr\.?\s*/i, '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
 
 /* CMS images and links: uploaded images are data:image URLs, stored paths are relative to the site root

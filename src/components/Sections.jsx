@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { ChevronDown, Star } from 'lucide-react';
-import { DEFAULTS, initials, money, safeUrl } from '../lib/content.js';
+import { DEFAULTS, initials, money, programName, safeUrl } from '../lib/content.js';
 import { useCms, useFaculty } from '../lib/site.jsx';
 
 export function Rich({ text }) {
@@ -98,7 +98,7 @@ export function ProgramCard({ g }) {
           {early && <p className="plan-card__early">{early}</p>}
           <p className="plan-card__price">from <strong>{money(Math.min(...g.cards.map(c => Number(c.price) || 0)))}</strong></p>
         </div>
-        <h3 className="plan-card__title">{g.label}</h3>
+        <h3 className="plan-card__title">{programName(g.label)}</h3>
         <Link className={`plan-card__btn${dark ? ' plan-card__btn--solid' : ''}`} to={`/plans#${encodeURIComponent(g.id)}`}>View Plans <span aria-hidden="true">→</span></Link>
       </div>
       <ul className="plan-card__list">{g.cards.map((c, i) => <li key={i}>{line(c)}</li>)}</ul>

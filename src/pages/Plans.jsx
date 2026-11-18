@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { money, planLabel } from '../lib/content.js';
+import { money, planLabel, planTitle, programName } from '../lib/content.js';
 import { usePlans } from '../lib/site.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { api } from '../lib/api.js';
@@ -113,7 +113,7 @@ export default function Plans() {
 
         <div className="rail mt-12 flex justify-start gap-6 overflow-x-auto text-[17px] sm:justify-center sm:gap-[35px]" id="tabs" role="tablist">
           {plans.map(g => (
-            <button key={g.id} type="button" role="tab" aria-selected={g === active} className={`plan-tab${g === active ? ' is-on' : ''}`} onClick={() => setPicked(g.id)}>{g.label}</button>
+            <button key={g.id} type="button" role="tab" aria-selected={g === active} className={`plan-tab${g === active ? ' is-on' : ''}`} onClick={() => setPicked(g.id)}>{programName(g.label)}</button>
           ))}
         </div>
         {active && (
@@ -177,7 +177,7 @@ export default function Plans() {
               <p className="mt-1 text-[13px] text-white/60">Welcome to Dr. SKM&#39;s Academy, {receipt.name}</p>
             </div>
             <dl className="divide-y divide-dashed divide-[#1E231E]/10 px-6 py-3 text-[13px]">
-              {[['Payment ID', receipt.paymentId || receipt.id], ['Plan', receipt.plan], ['Amount paid', money(receipt.price)],
+              {[['Payment ID', receipt.paymentId || receipt.id], ['Plan', planTitle(receipt.plan)], ['Amount paid', money(receipt.price)],
                 ['Email', receipt.email], ['Phone', receipt.phone || '—'], ['Date', new Date(receipt.date).toLocaleString()], ['Status', receipt.status],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-6 py-2.5">

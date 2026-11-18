@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useAuth } from '../lib/auth.jsx';
-import { money } from '../lib/content.js';
+import { money, planTitle } from '../lib/content.js';
 import { LogOut } from 'lucide-react';
 
 function formatDate(value) {
@@ -90,7 +90,7 @@ export default function Dashboard() {
         {plans.length ? <div className="mt-6 grid gap-5 md:grid-cols-2">
           {plans.map(plan => <article id={`plan-${plan.id}`} key={plan.id} className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_14px_40px_rgba(38,54,20,.08)]">
             <div className="flex items-start justify-between gap-4">
-              <div><p className="text-[11px] font-semibold uppercase tracking-[.16em] text-[#87986b]">Active subscription</p><h3 className="mt-2 text-[20px] font-semibold text-[#1d1f1b]">{plan.plan}</h3></div>
+              <div><p className="text-[11px] font-semibold uppercase tracking-[.16em] text-[#87986b]">Active subscription</p><h3 className="mt-2 text-[20px] font-semibold text-[#1d1f1b]">{planTitle(plan.plan)}</h3></div>
               <span className="rounded-full bg-[#e5f5e8] px-3 py-1 text-[11px] font-semibold text-[#23874a]">{plan.appSync ? 'Access granted' : 'Paid'}</span>
             </div>
             <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/5 pt-5 text-[13px]">
@@ -104,7 +104,7 @@ export default function Dashboard() {
           </>}
 
           {view === 'plans' && <section><p className="eyebrow">Purchase history</p><h1 className="mt-2 font-display text-[36px] font-bold text-[#1d1f1b]">My Plans</h1><p className="mt-2 text-[14px] text-black/55">Your enrolled courses and payment records.</p>
-            {plans.length ? <div className="mt-7 grid gap-4">{plans.map(plan => <article key={plan.id} className="rounded-2xl border border-black/10 p-5"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-[11px] uppercase tracking-[.16em] text-[#87986b]">Order {plan.id}</p><h2 className="mt-2 text-[18px] font-semibold">{plan.plan}</h2></div><span className="rounded-full bg-[#e5f5e8] px-3 py-1 text-[11px] font-semibold text-[#23874a]">{plan.status || 'Success'}</span></div><dl className="mt-5 grid gap-3 border-t border-black/5 pt-4 text-[13px] sm:grid-cols-3"><div><dt className="text-black/50">Purchased</dt><dd className="mt-1 font-medium">{formatDate(plan.date)}</dd></div><div><dt className="text-black/50">Total amount</dt><dd className="mt-1 font-medium">{money(plan.price)}</dd></div><div><dt className="text-black/50">Access</dt><dd className="mt-1 font-medium">{plan.appSync ? 'Active' : 'Processing'}</dd></div></dl></article>)}</div> : <p className="mt-8 rounded-2xl bg-[#f4f8ee] p-6 text-[14px] text-black/55">No purchases yet. <Link className="font-semibold text-[#87986b]" to="/plans">Browse plans</Link></p>}
+            {plans.length ? <div className="mt-7 grid gap-4">{plans.map(plan => <article key={plan.id} className="rounded-2xl border border-black/10 p-5"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-[11px] uppercase tracking-[.16em] text-[#87986b]">Order {plan.id}</p><h2 className="mt-2 text-[18px] font-semibold">{planTitle(plan.plan)}</h2></div><span className="rounded-full bg-[#e5f5e8] px-3 py-1 text-[11px] font-semibold text-[#23874a]">{plan.status || 'Success'}</span></div><dl className="mt-5 grid gap-3 border-t border-black/5 pt-4 text-[13px] sm:grid-cols-3"><div><dt className="text-black/50">Purchased</dt><dd className="mt-1 font-medium">{formatDate(plan.date)}</dd></div><div><dt className="text-black/50">Total amount</dt><dd className="mt-1 font-medium">{money(plan.price)}</dd></div><div><dt className="text-black/50">Access</dt><dd className="mt-1 font-medium">{plan.appSync ? 'Active' : 'Processing'}</dd></div></dl></article>)}</div> : <p className="mt-8 rounded-2xl bg-[#f4f8ee] p-6 text-[14px] text-black/55">No purchases yet. <Link className="font-semibold text-[#87986b]" to="/plans">Browse plans</Link></p>}
           </section>}
 
           {view === 'profile' && <section><p className="eyebrow">Account settings</p><h1 className="mt-2 font-display text-[36px] font-bold text-[#1d1f1b]">Profile details</h1><p className="mt-2 text-[14px] text-black/55">Keep your contact details up to date for enrollment and support.</p>

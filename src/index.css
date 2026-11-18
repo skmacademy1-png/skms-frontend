@@ -448,6 +448,7 @@ details[open] .chev{transform:rotate(180deg)}
   font-size:16px;line-height:1.85;color:#5f6b70;
 }
 .course__text strong{color:#14181c;font-weight:600}
+.course-heading{margin:14px 0 0;font-size:18px;line-height:1.4;font-weight:700;color:#14181c}   /* Academy-supplied section heading under a course title */
 
 
 /* 7-line clamp + "See more / See less" toggle (home course cards; the Courses page shows the full text) */

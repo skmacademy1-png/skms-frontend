@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router';
 import { COURSE_MENU } from '../lib/content.js';
-import { COURSE_COPY, SPECIALIST_COPY } from '../lib/copy.jsx';
+import { COURSE_COPY, COURSE_HEADINGS, SPECIALIST_COPY } from '../lib/copy.jsx';
 import { Cta } from '../components/Sections.jsx';
 
 const COURSES = {
@@ -29,6 +29,7 @@ export default function Courses() {
       <div className="course-page__inner">
         <div className="course-page__body">
           <h1 className="course-page__title">{c.title}</h1>
+          {COURSE_HEADINGS[key] && <p className="course-heading">{COURSE_HEADINGS[key]}</p>}
           {c.rich
             ? <div className="course-page__text course-rich">{SPECIALIST_COPY}</div>
             : <p className="course-page__text">{COURSE_COPY[key]}</p>}

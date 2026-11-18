@@ -1,6 +1,6 @@
 /* Shared chrome on every page: announcement bar, header (44px logo + drawer on mobile), footer and the
    Write-a-Review modal. Pages open that modal through the outlet context: useOutletContext().openReview() */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { ChevronDown, LogOut, Menu, X } from 'lucide-react';
 import { CONTACT, COURSE_MENU, NAV, isExternal, safeUrl } from '../lib/content.js';
@@ -13,15 +13,16 @@ import { EnquiryModal } from './Enquiry.jsx';
 export default function Layout() {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [enquiry, setEnquiry] = useState(null);   // 'job' | 'guidance' | null
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, key } = useLocation();
 
-  // a new page starts at the top; a #hash lands on its section (the sticky header offset is in the CSS)
+  // every navigation starts at the top — including the logo or a link to the page already open (same path, new key);
+  // a #hash lands on its section (the sticky header offset is in the CSS)
   useEffect(() => {
     const el = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
     el ? el.scrollIntoView() : window.scrollTo(0, 0);
     // web fonts re-wrap the text above and push the section down, so land again once they're in
     if (el) document.fonts.ready.then(() => el.scrollIntoView());
-  }, [pathname, hash]);
+  }, [pathname, hash, key]);
 
   return (
     <>
@@ -91,9 +92,9 @@ function LoginButton({ label, className }) {
 
 function Header() {
   const [drawer, setDrawer] = useState(false);
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, key } = useLocation();
   const [coursesOpen, setCoursesOpen] = useState(false);
-  useEffect(() => setDrawer(false), [pathname, hash]);   // following a link closes the drawer (a course is only a new #hash)
+  useEffect(() => setDrawer(false), [pathname, hash, key]);   // following any link closes the drawer, even one to the open page
   useEffect(() => { if (drawer) setCoursesOpen(pathname === '/courses'); }, [drawer]);   // opens expanded while a course is showing
 
   // the underline spans the padded link box, so it runs 10px past the text on each side (Figma); hover previews it.
@@ -111,7 +112,7 @@ function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-black/[.06] bg-mint">
       <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-2 px-4 min-[769px]:h-[106px] min-[769px]:gap-4 min-[769px]:px-6 lg:h-[114px] lg:px-10 min-[90rem]:px-20">
-        <Link to="/" className="navbar-brand h-11 w-11 shrink-0 min-[769px]:h-[80px] min-[769px]:w-[80px]">
+        <Link to="/" aria-label="Dr. SKM's Academy — home" className="navbar-brand h-11 w-11 shrink-0 min-[769px]:h-[80px] min-[769px]:w-[80px]">
           <img src="/img/logo.png" alt="Dr. SKM's Academy" className="h-full w-full object-contain" />
         </Link>
         <nav className="nav-font ml-10 hidden items-center gap-[11px] text-[18px] lg:flex xl:mx-auto">
@@ -146,7 +147,7 @@ function Header() {
         <div onClick={() => setDrawer(false)} className={`absolute inset-0 bg-black/40 transition-opacity ${drawer ? 'opacity-100' : 'opacity-0'}`} />
         <nav className={`absolute right-0 top-0 flex h-full w-[min(82vw,320px)] flex-col overflow-y-auto overscroll-contain bg-white px-6 pb-8 pt-4 shadow-2xl transition-transform duration-300 ${drawer ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className="mb-4 flex items-center justify-between">
-            <img src="/img/logo.png" alt="" className="h-11 w-11 object-contain" />
+            <Link to="/" aria-label="Dr. SKM's Academy — home" className="navbar-brand"><img src="/img/logo.png" alt="" className="h-11 w-11 object-contain" /></Link>
             <button type="button" onClick={() => setDrawer(false)} className="-mr-2 p-2" aria-label="Close menu"><X className="h-6 w-6" /></button>
           </div>
           {NAV.map(([to, label]) => to !== '/courses' ? (
@@ -199,10 +200,10 @@ function Footer() {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <div className="site-footer__logo">
-            <span><img src="/img/logo.png" alt="Dr. SKM's Academy" className="h-full w-full object-contain" /></span>
+          <Link to="/" className="site-footer__logo" aria-label="Dr. SKM's Academy — home">
+            <span><img src="/img/logo.png" alt="" className="h-full w-full object-contain" /></span>
             <span className="site-footer__name">Dr. SKM&#39;s<br />Academy</span>
-          </div>
+          </Link>
           <p className="site-footer__blurb">AI-powered clinical learning designed specifically for Medical Licensing Examinations. Trusted by 500+ doctors across the GCC.</p>
           <div className="site-footer__social"><Socials size={44} /></div>
           {/* 769–1279px: the navbar has no room for the store pills (phones get icon-only ones in the navbar) */}
@@ -226,39 +227,47 @@ function ReviewModal({ onClose }) {
   const [body, setBody] = useState('');
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
+  // one id per fill-in: a double submit or a retry after a timeout is stored once by the API
+  const id = useRef(crypto.randomUUID());
 
-  async function send() {
+  async function send(e) {
+    e.preventDefault();
+    if (busy) return;
+    const f = e.currentTarget, text = body.trim();
     if (!rating) return setMsg({ text: 'Please pick a star rating.', bad: true });
-    if (!name.trim()) return setMsg({ text: 'Please enter your name.', bad: true });
-    if (body.trim().length < 10) return setMsg({ text: 'Please write a few words about your experience.', bad: true });
+    if (!name.trim()) { f.elements.name.focus(); return setMsg({ text: 'Please enter your name.', bad: true }); }
+    if (text.length < 10) { f.elements.body.focus(); return setMsg({ text: 'Please write at least 10 characters about your experience.', bad: true }); }
     setBusy(true);
-    const r = await api('/api/reviews', { method: 'POST', body: JSON.stringify({ name, rating, body }) });
+    setMsg({ text: 'Sending your review… the first send can take up to a minute while our server wakes up.' });
+    const r = await api('/api/reviews', { method: 'POST', body: JSON.stringify({ id: id.current, name: name.trim(), rating, body: text }) });
     setBusy(false);
-    if (!r?.ok) return setMsg({ text: r?.data?.error || 'Could not send your review — please try again.', bad: true });
+    if (!r) return setMsg({ text: 'Could not reach our server — please check your connection and try again.', bad: true });
+    if (!r.ok) return setMsg({ text: r.data?.error || `Could not send your review (error ${r.status}) — please try again.`, bad: true });
+    id.current = crypto.randomUUID();
     setName(''); setBody(''); setRating(0);
-    setMsg({ text: 'Thank you! Your review has been sent to our team.' });
+    setMsg({ text: 'Thank you! Your review has been sent to our team for approval.' });
   }
 
   return (
     <div className="modal-veil" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="review-card" role="dialog" aria-modal="true" aria-label="Write a review">
+      <form noValidate onSubmit={send} className="review-card" role="dialog" aria-modal="true" aria-label="Write a review">
         <button type="button" onClick={onClose} className="review-card__x" aria-label="Close"><X /></button>
         <p className="review-card__label">Your Rating</p>
         <div className="review-card__stars">
           {[1, 2, 3, 4, 5].map(n => (
-            <button key={n} type="button" aria-label={`${n} star`} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}>&#9733;</button>
+            <button key={n} type="button" aria-label={`${n} star`} aria-pressed={n === rating} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}>&#9733;</button>
           ))}
         </div>
         <label className="review-card__label" htmlFor="rev-name">Name</label>
-        <input id="rev-name" className="review-card__input" value={name} onChange={e => setName(e.target.value)} />
+        <input id="rev-name" name="name" autoComplete="name" maxLength={80} className="review-card__input" value={name} onChange={e => setName(e.target.value)} />
         <label className="review-card__label" htmlFor="rev-text">Your Review</label>
-        <textarea id="rev-text" className="review-card__input review-card__area" placeholder="Write your message...." value={body} onChange={e => setBody(e.target.value)} />
+        <textarea id="rev-text" name="body" maxLength={2000} className="review-card__input review-card__area" placeholder="Write your message...." value={body} onChange={e => setBody(e.target.value)} />
         {msg && <p role="status" className="auth-msg" style={{ color: msg.bad ? '#b42318' : '#4b5b33' }}>{msg.text}</p>}
         <div className="review-card__actions">
           <button type="button" className="review-card__cancel" onClick={onClose}>Cancel</button>
-          <button type="button" className="btn btn--primary review-card__send" onClick={send} disabled={busy}>Send Review</button>
+          <button type="submit" className="btn btn--primary review-card__send" disabled={busy}>{busy ? 'Sending…' : 'Send Review'}</button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
