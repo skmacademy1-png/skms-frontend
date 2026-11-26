@@ -11,6 +11,9 @@ import { useAuth } from '../lib/auth.jsx';
 import { api } from '../lib/api.js';
 import { PlanCard } from '../components/Sections.jsx';
 
+const TINTS = ['grey', 'blue', 'pink'];
+const BADGE = { specialty: 'Specialty', exam: 'Licensing Exam' };
+const BUTTON = { program: 'Select Course', specialty: 'Select Specialty', exam: 'Select Exam' };
 const STEP = { program: 'Choose your course', specialty: 'Choose your specialty', exam: 'Choose your licensing exam' };
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const loadRazorpay = () => window.Razorpay ? Promise.resolve() : new Promise((ok, no) => {
@@ -30,6 +33,15 @@ export default function Plans() {
   const asking = active ? keys.find(k => !sel[k]) : 'program';   // undefined → every choice made: show the plans
   const options = asking === 'program' ? plans.map(g => [g.id, programName(g.label)])
     : asking ? CHOICES[active.id][asking].map(o => [o, o]) : null;
+  // one or two check lines under each card
+  const highlights = (step, v) => {
+    if (step !== 'program') return [step === 'specialty' ? 'Next: choose your licensing exam' : 'Next: choose your plan'];
+    const g = plans.find(p => p.id === v), c = CHOICES[v] || {};
+    return [
+      c.specialty ? `${c.specialty.length} specialties · ${c.exam.length} exams` : c.exam ? `${c.exam.length} Gulf licensing exams` : null,
+      `${g.cards.length} plan${g.cards.length > 1 ? 's' : ''} · from ${money(Math.min(...g.cards.map(x => Number(x.price))))}`,
+    ].filter(Boolean);
+  };
   const crumbs = active ? [['program', programName(active.label)], ...keys.filter(k => sel[k]).map(k => [k, sel[k]])] : [];
   // go back to step `to`: it and every later choice are cleared, earlier ones kept
   const back = to => setSel(s => Object.fromEntries(['program', ...keys].slice(0, ['program', ...keys].indexOf(to)).map(k => [k, s[k]])));
@@ -134,14 +146,22 @@ export default function Plans() {
         )}
 
         {options ? (
-          <div className="mx-auto mt-9 max-w-[880px]">
+          <div className="mt-9">
             <h2 className="text-center font-display text-[22px] font-bold">{STEP[asking]}</h2>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {options.map(([v, text]) => (
-                <button key={v} type="button" onClick={() => setSel(s => ({ ...s, [asking]: v }))}
-                  className="flex min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-[#e3e8e0] bg-white px-5 py-4 text-left text-[15px] font-medium text-[#1E231E] shadow-sm transition hover:border-[#7d8f57] hover:shadow-md">
-                  {text} <ChevronRight className="h-5 w-5 shrink-0 text-[#7d8f57]" />
-                </button>
+            <div className="pick-grid mt-6">
+              {options.map(([v, text], i) => (
+                <article key={v} className="plan-card" onClick={() => setSel(s => ({ ...s, [asking]: v }))}>
+                  <div className="plan-card__top">
+                    <div className={`plan-card__head plan-card__head--${TINTS[i % 3]}`}>
+                      <span className="plan-card__badge">{asking === 'program' ? `Course ${String(i + 1).padStart(2, '0')}` : BADGE[asking]}</span>
+                      <p className="pick-card__title">{text}</p>
+                    </div>
+                    <button type="button" className="plan-card__btn">{BUTTON[asking]}</button>
+                  </div>
+                  <ul className="plan-card__list plan-card__list--check">
+                    {highlights(asking, v).map(h => <li key={h}>{h}</li>)}
+                  </ul>
+                </article>
               ))}
             </div>
           </div>

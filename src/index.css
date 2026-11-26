@@ -786,6 +786,20 @@ details[open] .chev{transform:rotate(180deg)}
 @media (max-width:1000px){
   .plan-grid{grid-template-columns:repeat(2,290px);width:min(100%,619px)}
 }
+/* selection steps (course / specialty / exam): the plan card look, 3 → 2 → 1 columns, whole card clickable */
+.pick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,290px));gap:32px;justify-content:center;grid-auto-rows:1fr}
+.pick-grid .plan-card{min-height:0;padding:0;border:1px solid #ececec;border-radius:32px;box-shadow:none;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.pick-grid .plan-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(38,54,20,.12)}
+.pick-grid .plan-card__head{height:auto;min-height:154px;border-radius:22px;gap:14px}
+.pick-grid .plan-card__badge{letter-spacing:.08em;color:#6b6b6b}
+.pick-grid .plan-card__btn{border-color:#a4ae8f}
+.pick-grid .plan-card__list{margin:22px 20px 24px}
+.pick-grid .plan-card__list--check li{padding-left:22px;color:#5f5f5f}
+.pick-grid .plan-card__list--check li::before{border-width:0 0 1.5px 1.5px;border-color:#8a9b68}
+.pick-card__title{margin:auto 0 0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;line-height:1.3;color:#1a1a1a}
+@media (max-width:1000px){.pick-grid{grid-template-columns:repeat(2,minmax(0,290px))}}
+@media (max-width:620px){.pick-grid{grid-template-columns:minmax(0,340px);gap:20px}}
+
 /* mobile: one card at a time, swiped or stepped with the arrows under it (Plans.jsx) */
 .plan-nav{display:none}
 @media (max-width:620px){
