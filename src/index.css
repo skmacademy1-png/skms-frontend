@@ -797,6 +797,8 @@ details[open] .chev{transform:rotate(180deg)}
 .pick-grid .plan-card__list--check li{padding-left:22px;color:#5f5f5f}
 .pick-grid .plan-card__list--check li::before{border-width:0 0 1.5px 1.5px;border-color:#8a9b68}
 .pick-card__title{margin:auto 0 0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;line-height:1.3;color:#1a1a1a}
+.pick-grid--4{grid-template-columns:repeat(4,minmax(0,290px))}   /* 4 courses: one row when it fits, else 2×2 (never 3 + 1) */
+@media (max-width:1330px){.pick-grid--4{grid-template-columns:repeat(2,minmax(0,290px))}}
 @media (max-width:1000px){.pick-grid{grid-template-columns:repeat(2,minmax(0,290px))}}
 @media (max-width:620px){.pick-grid{grid-template-columns:minmax(0,340px);gap:20px}}
 

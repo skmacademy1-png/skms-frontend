@@ -148,7 +148,7 @@ export default function Plans() {
         {options ? (
           <div className="mt-9">
             <h2 className="text-center font-display text-[22px] font-bold">{STEP[asking]}</h2>
-            <div className="pick-grid mt-6">
+            <div className={`pick-grid mt-6${options.length % 4 === 0 ? ' pick-grid--4' : ''}`}>
               {options.map(([v, text], i) => (
                 <article key={v} className="plan-card" onClick={() => setSel(s => ({ ...s, [asking]: v }))}>
                   <div className="plan-card__top">
