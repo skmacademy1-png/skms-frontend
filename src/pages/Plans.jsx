@@ -27,6 +27,7 @@ export default function Plans() {
   const plans = usePlans();
   const { hash } = useLocation();
   const navigate = useNavigate();
+  const stepTop = useRef(null);
   const [sel, setSel] = useState({});   // { program, specialty, exam }
   useEffect(() => setSel({ program: decodeURIComponent(hash.slice(1)) }), [hash]);   // /plans#gp from another page skips the course step
   const active = plans.find(g => g.id === sel.program);
@@ -49,6 +50,12 @@ export default function Plans() {
   const grid = useRef(null);
   const [slide, setSlide] = useState(0);
   useEffect(() => { grid.current?.scrollTo({ left: 0 }); setSlide(0); }, [active?.id, asking]);
+  /* every step change (forward, Back, a chip): if the step heading is out of view — the card clicked was far down,
+     so the shorter next step would leave the page in the footer — bring it back under the sticky header */
+  useEffect(() => {
+    const below = document.querySelector('header')?.getBoundingClientRect().bottom ?? 0, top = stepTop.current?.getBoundingClientRect().top;
+    if (top != null && (top < below || top > innerHeight - 120)) scrollTo({ top: scrollY + top - below - 16, behavior: 'smooth' });
+  }, [sel.program, sel.specialty, sel.exam]);
   const step = () => { const [a, b] = grid.current.children; return b ? b.offsetLeft - a.offsetLeft : 1; };   // one card + gap
   const goTo = i => grid.current.scrollTo({ left: i * step(), behavior: 'smooth' });
 
@@ -131,6 +138,7 @@ export default function Plans() {
           <p className="mx-auto mt-5 max-w-[700px] text-[15px] leading-8 text-[#5f5f5f]">Flexible plans for every stage of your medical career — Gulf licensing, specialist examinations, AI clinical learning, and final year preparation.</p>
         </div>
 
+        <div ref={stepTop} />
         {crumbs.length > 0 && (
           <div className="mt-10 flex flex-wrap items-center justify-center gap-2 text-[14px]" aria-label="Your selections">
             <button type="button" onClick={() => back(crumbs.at(-1)[0])} className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium text-[#3a3a3a] transition hover:bg-white">
@@ -181,7 +189,7 @@ export default function Plans() {
         )}
 
         <p className="mx-auto mt-20 max-w-[980px] text-center text-[12px] leading-6 text-[#8a8a8a]">
-          Payments should only be made through the official SKM&#39;s academy website www.dr.skmsacademy.com or the SKM&#39;s academy app. We do not authorize payments to individual accounts or direct bank transfers. SKM&#39;s academy is not liable for payments made through unauthorized channels.
+          Payments should only be made through the official SKM&#39;s academy website drskmacademy.com or the SKM&#39;s academy app. We do not authorize payments to individual accounts or direct bank transfers. SKM&#39;s academy is not liable for payments made through unauthorized channels.
         </p>
       </div>
 
