@@ -30,20 +30,20 @@ export const DEFAULTS = {
      was, note, flag, sub, tone (grey|blue|pink), dark */
   plans: [
     { id: 'gp', label: 'GP License Exam', courseId: 22, cards: [
-      { planId: 14, name: 'Plan A', price: 60, durationDays: 30, duration: '30 days access', tone: 'grey', features: ['Mock Test', 'Rapid Recalls'] },
+      { planId: 14, name: 'Plan A', price: 55, durationDays: 30, duration: '30 days access', tone: 'grey', features: ['Mock Test', 'Rapid Recalls'] },
       { planId: 15, name: 'Plan B', price: 85, durationDays: 45, duration: '45 days access', tone: 'blue', features: ['MCQ Bank', 'Mock Test', 'Rapid Recalls'] },
       { planId: 16, name: 'Plan C', price: 150, durationDays: 45, duration: '45 days access', tone: 'pink', features: ['MCQ Bank', 'Mock Test', 'Rapid Recalls', 'Video Lectures'] },
     ] },
     { id: 'specialist', label: 'Specialist License Exam', courseId: 19, tone: 'blue', cards: [
       { planId: 23, name: 'Plan A', price: 100, durationDays: 45, duration: '45 days access', tone: 'grey', features: ['MCQ Bank', 'Mock Test'] },
-      { planId: 24, name: 'Plan B', price: 200, durationDays: 45, duration: '45 days access', tone: 'blue', features: ['MCQ Bank', 'Mock Test', 'Video Lectures'] },
+      { planId: 24, name: 'Plan B', price: 199, durationDays: 45, duration: '45 days access', tone: 'blue', features: ['MCQ Bank', 'Mock Test', 'Video Lectures'] },
     ] },
     { id: 'ai', label: 'AI Live Patient', courseId: 20, badge: 'Subscription', flag: '★ Early Bird Available', early: 'Early Bird 30% off', cards: [
       { planId: 25, price: 119, durationDays: 90, duration: '3 months', tone: 'grey',
         note: 'Full AI Live Patient access for 3 months — unlimited clinical scenarios, patient–doctor video learning, and interactive case sessions.' },
-      { planId: 26, price: 104.3, was: 149, durationDays: 180, duration: '6 months', dark: true, flag: '★ Early Bird 30% off', sub: 'Save 30% — limited time',
+      { planId: 26, price: 149, durationDays: 180, duration: '6 months', dark: true, flag: '★ Early Bird 30% off', sub: 'Save 30% — limited time',
         note: 'Full AI Live Patient access for 6 months — unlimited clinical scenarios, patient–doctor video learning, and interactive case sessions.' },
-      { planId: 27, price: 200, durationDays: 365, duration: '12 months', tone: 'blue',
+      { planId: 27, price: 199, durationDays: 365, duration: '12 months', tone: 'blue',
         note: 'Full AI Live Patient access for 12 months — unlimited clinical scenarios, patient–doctor video learning, and interactive case sessions.' },
     ] },
     { id: 'final', label: 'Final Year Medicine Practical', courseId: 21, cards: [

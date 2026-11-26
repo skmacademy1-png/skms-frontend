@@ -88,7 +88,7 @@ export function ProgramCard({ g }) {
   // one plan: the title already names it · named plans: name, price, access · unnamed (AI): access, price, offer
   const line = c => g.cards.length === 1 ? `${money(c.price)} — ${c.duration}`
     : c.name ? `${c.name} — ${money(c.price)} (${c.duration})`
-    : `${c.duration} — ${money(c.price)}${c.was ? '  Early Bird' : ''}`;
+    : `${c.duration} — ${money(c.price)}${c.flag ? '  Early Bird' : ''}`;
   return (
     <article className={`plan-card${dark ? ' plan-card--dark' : ''}`}>
       {flag && <span className="plan-card__flag">{flag}</span>}
