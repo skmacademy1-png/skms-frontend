@@ -4,13 +4,15 @@
    profile has none. A logged-out Buy Now opens the login modal and continues to payment once signed in. */
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ClipboardCheck, GraduationCap, Stethoscope } from 'lucide-react';
 import { CHOICES, money, planLabel, planTitle, programName } from '../lib/content.js';
 import { usePlans } from '../lib/site.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { api } from '../lib/api.js';
 import { PlanCard } from '../components/Sections.jsx';
 
+const TINTS = ['sage', 'mist', 'sand', 'rose'];
+const ICON = { program: GraduationCap, specialty: Stethoscope, exam: ClipboardCheck };
 const BADGE = { specialty: 'Specialty', exam: 'Licensing Exam' };
 const BUTTON = { program: 'Select Course', specialty: 'Select Specialty', exam: 'Select Exam' };
 const STEP = { program: 'Choose your course', specialty: 'Choose your specialty', exam: 'Choose your licensing exam' };
@@ -145,10 +147,13 @@ export default function Plans() {
         {options ? (
           <div className="mt-9">
             <h2 className="text-center font-display text-[22px] font-bold">{STEP[asking]}</h2>
-            <div className={`pick-grid mt-6${options.length % 4 === 0 ? ' pick-grid--4' : ''}`}>
+            <div className={`pick-grid mx-auto mt-6 max-w-7xl${options.length % 4 === 0 ? ' pick-grid--4' : ''}`}>
               {options.map(([v, text], i) => (
-                <article key={v} className="pick-card" onClick={() => setSel(s => ({ ...s, [asking]: v }))}>
-                  <span className="pick-card__badge">{asking === 'program' ? `Course ${String(i + 1).padStart(2, '0')}` : BADGE[asking]}</span>
+                <article key={v} className={`pick-card pick-card--${TINTS[i % 4]}`} onClick={() => setSel(s => ({ ...s, [asking]: v }))}>
+                  <div className="pick-card__row">
+                    <span className="pick-card__badge">{asking === 'program' ? `Course ${String(i + 1).padStart(2, '0')}` : BADGE[asking]}</span>
+                    <span className="pick-card__icon" aria-hidden="true">{(() => { const I = ICON[asking]; return <I className="h-[18px] w-[18px]" />; })()}</span>
+                  </div>
                   <h3 className="pick-card__title">{text}</h3>
                   <p className="pick-card__desc">{describe(asking, v)}</p>
                   <button type="button" className="pick-card__btn">{BUTTON[asking]} <ChevronRight className="h-4 w-4" /></button>
