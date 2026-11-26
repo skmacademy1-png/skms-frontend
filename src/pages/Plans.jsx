@@ -11,7 +11,6 @@ import { useAuth } from '../lib/auth.jsx';
 import { api } from '../lib/api.js';
 import { PlanCard } from '../components/Sections.jsx';
 
-const TINTS = ['grey', 'blue', 'pink'];
 const BADGE = { specialty: 'Specialty', exam: 'Licensing Exam' };
 const BUTTON = { program: 'Select Course', specialty: 'Select Specialty', exam: 'Select Exam' };
 const STEP = { program: 'Choose your course', specialty: 'Choose your specialty', exam: 'Choose your licensing exam' };
@@ -33,14 +32,12 @@ export default function Plans() {
   const asking = active ? keys.find(k => !sel[k]) : 'program';   // undefined → every choice made: show the plans
   const options = asking === 'program' ? plans.map(g => [g.id, programName(g.label)])
     : asking ? CHOICES[active.id][asking].map(o => [o, o]) : null;
-  // one or two check lines under each card
-  const highlights = (step, v) => {
-    if (step !== 'program') return [step === 'specialty' ? 'Next: choose your licensing exam' : 'Next: choose your plan'];
+  // one line of scope under each selection card
+  const describe = (step, v) => {
+    if (step !== 'program') return step === 'specialty' ? 'Next: choose your licensing exam' : 'Next: choose your plan';
     const g = plans.find(p => p.id === v), c = CHOICES[v] || {};
-    return [
-      c.specialty ? `${c.specialty.length} specialties · ${c.exam.length} exams` : c.exam ? `${c.exam.length} Gulf licensing exams` : null,
-      `${g.cards.length} plan${g.cards.length > 1 ? 's' : ''} · from ${money(Math.min(...g.cards.map(x => Number(x.price))))}`,
-    ].filter(Boolean);
+    const scope = c.specialty ? `${c.specialty.length} specialties` : c.exam ? `${c.exam.length} exams` : `${g.cards.length} plan${g.cards.length > 1 ? 's' : ''}`;
+    return `${scope} · from ${money(Math.min(...g.cards.map(x => Number(x.price))))}`;
   };
   const crumbs = active ? [['program', programName(active.label)], ...keys.filter(k => sel[k]).map(k => [k, sel[k]])] : [];
   // go back to step `to`: it and every later choice are cleared, earlier ones kept
@@ -150,17 +147,11 @@ export default function Plans() {
             <h2 className="text-center font-display text-[22px] font-bold">{STEP[asking]}</h2>
             <div className={`pick-grid mt-6${options.length % 4 === 0 ? ' pick-grid--4' : ''}`}>
               {options.map(([v, text], i) => (
-                <article key={v} className="plan-card" onClick={() => setSel(s => ({ ...s, [asking]: v }))}>
-                  <div className="plan-card__top">
-                    <div className={`plan-card__head plan-card__head--${TINTS[i % 3]}`}>
-                      <span className="plan-card__badge">{asking === 'program' ? `Course ${String(i + 1).padStart(2, '0')}` : BADGE[asking]}</span>
-                      <p className="pick-card__title">{text}</p>
-                    </div>
-                    <button type="button" className="plan-card__btn">{BUTTON[asking]}</button>
-                  </div>
-                  <ul className="plan-card__list plan-card__list--check">
-                    {highlights(asking, v).map(h => <li key={h}>{h}</li>)}
-                  </ul>
+                <article key={v} className="pick-card" onClick={() => setSel(s => ({ ...s, [asking]: v }))}>
+                  <span className="pick-card__badge">{asking === 'program' ? `Course ${String(i + 1).padStart(2, '0')}` : BADGE[asking]}</span>
+                  <h3 className="pick-card__title">{text}</h3>
+                  <p className="pick-card__desc">{describe(asking, v)}</p>
+                  <button type="button" className="pick-card__btn">{BUTTON[asking]} <ChevronRight className="h-4 w-4" /></button>
                 </article>
               ))}
             </div>
