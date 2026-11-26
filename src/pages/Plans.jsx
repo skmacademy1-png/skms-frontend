@@ -1,15 +1,17 @@
-/* Buy Plans: program tabs → plan cards → one-click Razorpay checkout.
+/* Buy Plans: one step per window (payment.pdf) — course → [specialty] → [licensing exam] → plan cards → one-click
+   Razorpay checkout. The chosen specialty and exam ride along to the checkout and onto the enrollment.
    No buyer form: the buyer is the signed-in account, and Razorpay's own overlay collects a phone number when the
    profile has none. A logged-out Buy Now opens the login modal and continues to payment once signed in. */
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { money, planLabel, planTitle, programName } from '../lib/content.js';
+import { CHOICES, money, planLabel, planTitle, programName } from '../lib/content.js';
 import { usePlans } from '../lib/site.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { api } from '../lib/api.js';
 import { PlanCard } from '../components/Sections.jsx';
 
+const STEP = { program: 'Choose your course', specialty: 'Choose your specialty', exam: 'Choose your licensing exam' };
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const loadRazorpay = () => window.Razorpay ? Promise.resolve() : new Promise((ok, no) => {
   const s = Object.assign(document.createElement('script'), { src: 'https://checkout.razorpay.com/v1/checkout.js', onload: ok });
@@ -21,14 +23,21 @@ export default function Plans() {
   const plans = usePlans();
   const { hash } = useLocation();
   const navigate = useNavigate();
-  const [picked, setPicked] = useState(null);
-  useEffect(() => setPicked(null), [hash]);   // /plans#ai from another page opens that tab
-  const active = plans.find(g => g.id === (picked ?? decodeURIComponent(hash.slice(1)))) || plans[0];
+  const [sel, setSel] = useState({});   // { program, specialty, exam }
+  useEffect(() => setSel({ program: decodeURIComponent(hash.slice(1)) }), [hash]);   // /plans#gp from another page skips the course step
+  const active = plans.find(g => g.id === sel.program);
+  const keys = active ? Object.keys(CHOICES[active.id] || {}) : [];
+  const asking = active ? keys.find(k => !sel[k]) : 'program';   // undefined → every choice made: show the plans
+  const options = asking === 'program' ? plans.map(g => [g.id, programName(g.label)])
+    : asking ? CHOICES[active.id][asking].map(o => [o, o]) : null;
+  const crumbs = active ? [['program', programName(active.label)], ...keys.filter(k => sel[k]).map(k => [k, sel[k]])] : [];
+  // go back to step `to`: it and every later choice are cleared, earlier ones kept
+  const back = to => setSel(s => Object.fromEntries(['program', ...keys].slice(0, ['program', ...keys].indexOf(to)).map(k => [k, s[k]])));
 
   /* ≤620px the grid is a one-card swipe carousel (CSS scroll-snap); the arrows and dots drive the same scroll */
   const grid = useRef(null);
   const [slide, setSlide] = useState(0);
-  useEffect(() => { grid.current?.scrollTo({ left: 0 }); setSlide(0); }, [active?.id]);
+  useEffect(() => { grid.current?.scrollTo({ left: 0 }); setSlide(0); }, [active?.id, asking]);
   const step = () => { const [a, b] = grid.current.children; return b ? b.offsetLeft - a.offsetLeft : 1; };   // one card + gap
   const goTo = i => grid.current.scrollTo({ left: i * step(), behavior: 'smooth' });
 
@@ -38,8 +47,8 @@ export default function Plans() {
   const order = useRef(null), busy = useRef(false);
 
   function buy(g, index) {
-    const c = g.cards[index];
-    order.current = { planId: g.id, index, planRef: c.planId, label: planLabel(g, c), price: Number(c.price) };
+    const c = g.cards[index], choices = keys.map(k => sel[k]);
+    order.current = { planId: g.id, index, planRef: c.planId, specialty: sel.specialty, exam: sel.exam, label: planLabel(g, c, choices), price: Number(c.price) };
     user ? pay(user) : requireLogin(pay, true);
   }
 
@@ -52,7 +61,7 @@ export default function Plans() {
     try {
       const r = await api('/api/checkout/razorpay', {
         method: 'POST', headers: { Authorization: `Bearer ${u.token}` },
-        body: JSON.stringify({ planId: o.planId, index: o.index, planRef: o.planRef, ...buyer }),
+        body: JSON.stringify({ planId: o.planId, index: o.index, planRef: o.planRef, specialty: o.specialty, exam: o.exam, ...buyer }),
       });
       if (!r) throw new Error('We could not reach the payment server — please try again in a minute.');
       if (r.status === 401) {   // session expired mid-checkout: sign in again and land back here
@@ -111,14 +120,35 @@ export default function Plans() {
           <p className="mx-auto mt-5 max-w-[700px] text-[15px] leading-8 text-[#5f5f5f]">Flexible plans for every stage of your medical career — Gulf licensing, specialist examinations, AI clinical learning, and final year preparation.</p>
         </div>
 
-        <div className="rail mt-12 flex justify-start gap-6 overflow-x-auto text-[17px] sm:justify-center sm:gap-[35px]" id="tabs" role="tablist">
-          {plans.map(g => (
-            <button key={g.id} type="button" role="tab" aria-selected={g === active} className={`plan-tab${g === active ? ' is-on' : ''}`} onClick={() => setPicked(g.id)}>{programName(g.label)}</button>
-          ))}
-        </div>
-        {active && (
+        {crumbs.length > 0 && (
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-2 text-[14px]" aria-label="Your selections">
+            <button type="button" onClick={() => back(crumbs.at(-1)[0])} className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-medium text-[#3a3a3a] transition hover:bg-white">
+              <ChevronLeft className="h-4 w-4" /> Back
+            </button>
+            {crumbs.map(([k, v]) => (
+              <button key={k} type="button" onClick={() => back(k)} title="Change" className="rounded-full border border-[#7d8f57]/40 bg-white px-4 py-1.5 text-[#3a3a3a] transition hover:border-[#7d8f57]">
+                {v} <span className="text-[#7d8f57]">✎</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {options ? (
+          <div className="mx-auto mt-9 max-w-[880px]">
+            <h2 className="text-center font-display text-[22px] font-bold">{STEP[asking]}</h2>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {options.map(([v, text]) => (
+                <button key={v} type="button" onClick={() => setSel(s => ({ ...s, [asking]: v }))}
+                  className="flex min-h-[64px] items-center justify-between gap-3 rounded-2xl border border-[#e3e8e0] bg-white px-5 py-4 text-left text-[15px] font-medium text-[#1E231E] shadow-sm transition hover:border-[#7d8f57] hover:shadow-md">
+                  {text} <ChevronRight className="h-5 w-5 shrink-0 text-[#7d8f57]" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
           <div className="mt-9" id="panels">
-            <div id={active.id} ref={grid} className="plan-grid" style={{ '--cols': Math.min(active.cards.length, 4) }}
+            <h2 className="text-center font-display text-[22px] font-bold">Choose your plan</h2>
+            <div id={active.id} ref={grid} className="plan-grid mt-6" style={{ '--cols': Math.min(active.cards.length, 4) }}
               onScroll={e => setSlide(Math.round(e.currentTarget.scrollLeft / step()))}>
               {active.cards.map((c, i) => <PlanCard key={c.planId ?? i} c={c} onBuy={() => buy(active, i)} />)}
             </div>

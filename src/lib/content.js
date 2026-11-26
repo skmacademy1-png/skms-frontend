@@ -133,7 +133,17 @@ const PROGRAM_NAMES = new Map(Object.entries({
 export const programName = name => PROGRAM_NAMES.get(normName(name)) ?? name;
 // "GP License Exam — Plan A" (a plan label, as saved on an enrollment) → "GP Gulf Licensing Examination — Plan A"
 export const planTitle = label => { const [p, ...rest] = String(label ?? '').split(' — '); return [programName(p), ...rest].join(' — '); };
-export const planLabel = (group, card) => [programName(group.label), card.name || card.duration].filter(Boolean).join(' — ');
+export const planLabel = (group, card, choices = []) => [programName(group.label), ...choices, card.name || card.duration].filter(Boolean).join(' — ');
+
+/* What a program's checkout asks before its plans, in order (payment.pdf). A copy of skms-backend/content.js CHOICES:
+   the server refuses a value that is not on its list, so change both together. */
+export const CHOICES = {
+  gp: { exam: ['DHA (Dubai) Exam', 'DoH/ HAAD Exam (Abu Dhabi)', 'UAE MOHAP Exam', 'SHA (Sharjah Health Authority) Exam', 'Kuwait prometric exam', 'SMLE(Saudi Exam)', 'OMSB Exam', 'QCHP Exam', 'NHRA Exam(Bahrain)'] },
+  specialist: {
+    specialty: ['Internal Medicine', 'Dermatology', 'Obstetrics and Gynaecology', 'Pediatrics', 'Ophthalmology', 'ENT'],
+    exam: ['KMLE', 'DHA', 'HAAD/DoH', 'SHA', 'MOHAP', 'QCHP', 'SMLE', 'OMSB', 'NHRA'],
+  },
+};
 export const initials = name => String(name ?? '').replace(/^Dr\.?\s*/i, '').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
 
 /* CMS images and links: uploaded images are data:image URLs, stored paths are relative to the site root
