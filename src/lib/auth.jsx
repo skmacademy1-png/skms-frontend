@@ -27,6 +27,7 @@ export function AuthProvider({ children }) {
   const [modal, setModal] = useState(null);   // null = closed, else { forPurchase }
   const [msg, setMsg] = useState(null);       // { text, bad }
   const [googleBusy, setGoogleBusy] = useState(false);
+  const [emailLogin, setEmailLogin] = useState(true);   // false once /api/config says OTP mail isn't configured
   const pending = useRef(null);               // what to do once signed in
   const tokenClient = useRef(null);
   const gisInit = useRef(false);             // StrictMode/remounts must not load + initialize GIS twice
@@ -94,6 +95,7 @@ export function AuthProvider({ children }) {
     gisInit.current = true;
     (async () => {
       const r = await api('/api/config');
+      if (r?.data?.emailLogin === false) setEmailLogin(false);
       const clientId = r?.data?.googleClientId;
       if (!clientId) return console.warn('[auth] no Google client id from /api/config');
       await loadGis();
@@ -124,13 +126,13 @@ export function AuthProvider({ children }) {
     <Auth.Provider value={{ user, account, refreshAccount, updateAccount, requireLogin, logout: () => setUser(null) }}>
       {children}
       {modal && <LoginModal forPurchase={modal.forPurchase} msg={msg} say={say} onClose={close}
-        onGoogle={googleSignIn} googleBusy={googleBusy} onLogin={finishLogin} />}
+        onGoogle={googleSignIn} googleBusy={googleBusy} emailLogin={emailLogin} onLogin={finishLogin} />}
     </Auth.Provider>
   );
 }
 
 /* First submit mails a code (/api/auth/otp); second submit verifies it (/api/auth/verify). */
-function LoginModal({ forPurchase, msg, say, onClose, onGoogle, googleBusy, onLogin }) {
+function LoginModal({ forPurchase, msg, say, onClose, onGoogle, googleBusy, emailLogin, onLogin }) {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [challenge, setChallenge] = useState(null);
@@ -177,9 +179,9 @@ function LoginModal({ forPurchase, msg, say, onClose, onGoogle, googleBusy, onLo
         <div className="auth-panel">
           <button type="button" onClick={onClose} className="auth-x" aria-label="Close"><X className="h-6 w-6" /></button>
           <h4 className="auth-heading" id="auth-title">{forPurchase ? 'Login to buy this plan' : 'Welcome back'}</h4>
-          <p className="auth-sub">Continue with Google, or log in with a code sent to your email.</p>
+          <p className="auth-sub">{emailLogin ? 'Continue with Google, or log in with a code sent to your email.' : 'Continue with Google to log in.'}</p>
           <button type="button" className="auth-google" onClick={onGoogle} disabled={googleBusy}><GoogleG /><span>Continue with Google</span></button>
-          <form className="auth-form" noValidate onSubmit={submit}>
+          {emailLogin ? <form className="auth-form" noValidate onSubmit={submit}>
             <p className="auth-or">or</p>
             <label className="auth-label" htmlFor="auth-email">Enter your Email address</label>
             <input id="auth-email" name="email" type="email" autoComplete="email" maxLength={200} required className="auth-input" placeholder="eg, ajmal55@gmail.com"
@@ -191,7 +193,7 @@ function LoginModal({ forPurchase, msg, say, onClose, onGoogle, googleBusy, onLo
             </>}
             {msg && <p role="status" className="auth-msg" style={{ color: msg.bad ? '#b42318' : '#4b5b33' }}>{msg.text}</p>}
             <button type="submit" className="btn-grad auth-btn" disabled={busy}>{challenge ? 'Verify & Login' : 'Login'}</button>
-          </form>
+          </form> : msg && <p role="status" className="auth-msg" style={{ color: msg.bad ? '#b42318' : '#4b5b33' }}>{msg.text}</p>}
           <p className="auth-terms">By continuing you agree to our Terms of Use and Privacy Policy.</p>
         </div>
       </div>
